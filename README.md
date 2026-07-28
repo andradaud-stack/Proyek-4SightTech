@@ -5,3 +5,4 @@ Nama Anggota:
 3. Naysila Andini Anastasya (26)
 4. Hanifah Al Khairunnisa (16)
 5. Ervina Ramadhani Septiyataningsih (11)
+6. Lintang Cahyaning Ayu (22)
