@@ -1,2 +1,3 @@
 # Proyek-4SightTech
-Andra Syahdan Daud
+Nama Anggota:
+Andra Syahdan Daud (3)
