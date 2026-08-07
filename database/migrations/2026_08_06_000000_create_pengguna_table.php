@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('pengguna', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('pengguna_id');
-            $table->foreign('pengguna_id')->references('id')->on('pengguna')->cascadeOnDelete();
-            $table->foreignId('table_id')->constrained('tables')->cascadeOnDelete();
-            $table->string('status')->default('menunggu_konfirmasi');
-            $table->string('metode_pembayaran')->nullable();
-            $table->string('status_pembayaran')->default('belum_bayar');
-            $table->integer('total');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('role')->default('user');
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by', 36)->nullable();
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('pengguna');
     }
 };
