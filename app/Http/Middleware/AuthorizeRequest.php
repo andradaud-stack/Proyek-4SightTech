@@ -21,6 +21,11 @@ class AuthorizeRequest
     public function handle(Request $request, Closure $next)
     {
         $route = $request->route()->getName();
+
+        if (str_starts_with($route, 'customer.')) {
+            return $next($request);
+        }
+
         $user = $request->user();
 
         $can = Permission::can($route);
