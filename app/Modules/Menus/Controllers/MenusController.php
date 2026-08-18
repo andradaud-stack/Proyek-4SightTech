@@ -9,6 +9,8 @@ use App\Modules\Categories\Models\Categories;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MenusController extends Controller
 {
@@ -42,7 +44,7 @@ class MenusController extends Controller
 			'category_id' => ['label' => 'Category Id', 'type' => 'select', 'value' => old("category_id"), 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2'],
 			'name' => ['label' => 'Name', 'type' => 'text', 'value' => old("name"), 'required' => true],
 			'description' => ['label' => 'Description', 'type' => 'textarea', 'value' => old("description"), 'required' => true],
-			'image' => ['label' => 'Image', 'type' => 'text', 'value' => old("image"), 'required' => false, 'placeholder' => 'path file, nullable'],
+			'image' => ['label' => 'Image', 'type' => 'file', 'value' => old("image"), 'required' => false, 'accept' => 'image/*'],
 			'price' => ['label' => 'Price', 'type' => 'text', 'value' => old("price"), 'required' => true],
 			'stock' => ['label' => 'Stock', 'type' => 'text', 'value' => old("stock"), 'required' => true],
 			'is_active' => ['label' => 'Is Active', 'type' => 'select', 'value' => old("is_active"), 'required' => true, 'options' => ['1' => 'Ya', '0' => 'Tidak']],
@@ -59,7 +61,7 @@ class MenusController extends Controller
 			'category_id' => 'required',
 			'name' => 'required',
 			'description' => 'required',
-			'image' => 'required',
+			'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
 			'price' => 'required',
 			'stock' => 'required',
 			'is_active' => 'required',
@@ -70,7 +72,7 @@ class MenusController extends Controller
 		$menus->category_id = $request->input("category_id");
 		$menus->name = $request->input("name");
 		$menus->description = $request->input("description");
-		$menus->image = $request->input("image");
+		$menus->image = $this->simpanGambar($request);
 		$menus->price = $request->input("price");
 		$menus->stock = $request->input("stock");
 		$menus->is_active = $request->input("is_active");
@@ -102,7 +104,7 @@ class MenusController extends Controller
 			'category_id' => ['label' => 'Category Id', 'type' => 'select', 'value' => $menus->category_id, 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2', 'id' => 'category_id'],
 			'name' => ['label' => 'Name', 'type' => 'text', 'value' => $menus->name, 'required' => true, 'id' => 'name'],
 			'description' => ['label' => 'Description', 'type' => 'textarea', 'value' => $menus->description, 'required' => true, 'id' => 'description'],
-			'image' => ['label' => 'Image', 'type' => 'text', 'value' => $menus->image, 'required' => false, 'placeholder' => 'path file, nullable', 'id' => 'image'],
+			'image' => ['label' => 'Image', 'type' => 'file', 'value' => $menus->image, 'required' => false, 'accept' => 'image/*', 'id' => 'image'],
 			'price' => ['label' => 'Price', 'type' => 'text', 'value' => $menus->price, 'required' => true, 'id' => 'price'],
 			'stock' => ['label' => 'Stock', 'type' => 'text', 'value' => $menus->stock, 'required' => true, 'id' => 'stock'],
 			'is_active' => ['label' => 'Is Active', 'type' => 'select', 'value' => $menus->is_active, 'required' => true, 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'id' => 'is_active'],
@@ -120,7 +122,7 @@ class MenusController extends Controller
 			'category_id' => 'required',
 			'name' => 'required',
 			'description' => 'required',
-			'image' => 'required',
+			'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
 			'price' => 'required',
 			'stock' => 'required',
 			'is_active' => 'required',
@@ -128,10 +130,11 @@ class MenusController extends Controller
 		]);
 
 		$menus = Menus::find($id);
+		$gambarBaru = $this->simpanGambar($request, $menus);
 		$menus->category_id = $request->input("category_id");
 		$menus->name = $request->input("name");
 		$menus->description = $request->input("description");
-		$menus->image = $request->input("image");
+		$menus->image = $gambarBaru ?? $menus->image;
 		$menus->price = $request->input("price");
 		$menus->stock = $request->input("stock");
 		$menus->is_active = $request->input("is_active");
@@ -148,6 +151,9 @@ class MenusController extends Controller
 	public function destroy(Request $request, $id)
 	{
 		$menus = Menus::find($id);
+		if ($menus->image && Storage::disk('public')->exists($menus->image)) {
+			Storage::disk('public')->delete($menus->image);
+		}
 		$menus->deleted_by = Auth::id();
 		$menus->save();
 		$menus->delete();
@@ -155,6 +161,22 @@ class MenusController extends Controller
 		$text = 'menghapus '.$this->title;//.' '.$menus->what;
 		$this->log($request, $text, ['menus.id' => $menus->id]);
 		return back()->with('message_success', 'Menus berhasil dihapus!');
+	}
+
+	private function simpanGambar(Request $request, $menus = null)
+	{
+		if (! $request->hasFile('image')) {
+			return null;
+		}
+
+		if ($menus && $menus->image && Storage::disk('public')->exists($menus->image)) {
+			Storage::disk('public')->delete($menus->image);
+		}
+
+		$file = $request->file('image');
+		$nama = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+
+		return $file->storeAs('menus', $nama, 'public');
 	}
 
 }

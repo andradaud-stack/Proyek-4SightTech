@@ -3,7 +3,7 @@
 namespace App\Modules\Categories\Models;
 
 use App\Helpers\UsesUuid;
-use Illuminate\Support\Facades\DB;
+use App\Modules\Menus\Models\Menus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,5 +17,8 @@ class Categories extends Model
 	protected $table      = 'categories';
 	protected $fillable   = ['*'];
 
-	
+	public function menus()
+	{
+		return $this->hasMany(Menus::class, 'category_id');
+	}
 }
