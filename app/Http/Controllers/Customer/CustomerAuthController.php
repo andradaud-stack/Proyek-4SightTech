@@ -63,7 +63,7 @@ class CustomerAuthController extends Controller
         $pengguna = Pengguna::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
             'role' => 'user',
         ]);
 
