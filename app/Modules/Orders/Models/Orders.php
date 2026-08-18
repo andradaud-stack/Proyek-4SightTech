@@ -1,21 +1,67 @@
 <?php
 
+
+
 namespace App\Modules\Orders\Models;
 
-use App\Helpers\UsesUuid;
-use Illuminate\Support\Facades\DB;
+
+
+use App\Modules\Order\_items\Models\Order_items;
+
+use App\Modules\Pengguna\Models\Pengguna;
+
+use App\Modules\Tables\Models\Tables;
+
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
+
+
+
 class Orders extends Model
+
 {
-	use SoftDeletes;
-	use UsesUuid;
 
-	protected $casts      = ['deleted_at' => 'datetime', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
-	protected $table      = 'orders';
-	protected $fillable   = ['*'];
+use SoftDeletes;
 
-	
+
+
+protected $casts      = ['deleted_at' => 'datetime', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+
+protected $table      = 'orders';
+
+protected $fillable   = ['*'];
+
+
+
+public function pengguna()
+
+{
+
+	return $this->belongsTo(Pengguna::class, 'pengguna_id');
+
+}
+
+
+
+public function tabel()
+
+{
+
+	return $this->belongsTo(Tables::class, 'table_id');
+
+}
+
+
+
+public function orderItems()
+
+{
+
+	return $this->hasMany(Order\_items::class, 'order_id');
+
+}
+
 }
