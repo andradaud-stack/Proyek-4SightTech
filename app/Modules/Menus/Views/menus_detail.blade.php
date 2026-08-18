@@ -34,7 +34,13 @@
                             <div class='col-lg-2'><p>Category Id</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->category_id }}</p></div>
 									<div class='col-lg-2'><p>Name</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->name }}</p></div>
 									<div class='col-lg-2'><p>Description</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->description }}</p></div>
-									<div class='col-lg-2'><p>Image</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->image }}</p></div>
+									<div class='col-lg-2'><p>Image</p></div><div class='col-lg-10'>
+                                    @if($menus->image)
+                                        <img src="{{ asset('storage/' . $menus->image) }}" alt="{{ $menus->name }}" style="max-width:200px; border-radius:8px;">
+                                    @else
+                                        <p class='fw-bold'>-</p>
+                                    @endif
+                                </div>
 									<div class='col-lg-2'><p>Price</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->price }}</p></div>
 									<div class='col-lg-2'><p>Stock</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->stock }}</p></div>
 									<div class='col-lg-2'><p>Is Active</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->is_active }}</p></div>

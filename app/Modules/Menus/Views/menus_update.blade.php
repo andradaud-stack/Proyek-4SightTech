@@ -28,7 +28,7 @@
             </div>
             <div class="card-body">
                 @include('include.flash')
-                <form class="form form-horizontal" action="{{ route('menus.update', $menus->id) }}" method="POST">
+                <form class="form form-horizontal" action="{{ route('menus.update', $menus->id) }}" method="POST" enctype="multipart/form-data">
                     <div class="form-body">
                         @csrf @method('patch')
                         @foreach ($forms as $key => $field)
@@ -38,6 +38,9 @@
                                 </div>
                                 <div class="col-md-9 form-group">
                                     <x-dynamic-field :name="$key" :field="$field" />
+                                    @if ($key === 'image' && $menus->image)
+                                        <img src="{{ asset('storage/' . $menus->image) }}" alt="Preview {{ $menus->name }}" class="mt-2 rounded" style="max-width:160px; max-height:120px; object-fit:cover;">
+                                    @endif
                                     @error($key)
                                         <div class="text-danger">
                                             {{ $message }}

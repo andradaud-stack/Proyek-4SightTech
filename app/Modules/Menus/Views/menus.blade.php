@@ -63,7 +63,13 @@
                                     <td>{{ $item->category_id }}</td>
 									<td>{{ $item->name }}</td>
 									<td>{{ $item->description }}</td>
-									<td>{{ $item->image }}</td>
+									<td>
+                                    @if($item->image)
+                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width:60px; height:45px; object-fit:cover; border-radius:6px;">
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
 									<td>{{ $item->price }}</td>
 									<td>{{ $item->stock }}</td>
 									<td>{{ $item->is_active }}</td>

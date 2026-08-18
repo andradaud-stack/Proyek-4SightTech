@@ -243,7 +243,11 @@
     <div class="header">
       <div>
         <div class="greet-sub">Selamat Datang,</div>
-        <div class="greet-name">Guntur Syabudi</div>
+        <div class="greet-name">{{ Auth::guard('customer')->user()->name ?? 'Pengunjung' }}</div>
+        <form method="POST" action="{{ route('customer.logout') }}" style="margin-top:8px;">
+          @csrf
+          <button type="submit" style="background:none;border:none;padding:0;font-size:13px;font-weight:600;color:var(--maroon);cursor:pointer;text-decoration:underline;">Keluar</button>
+        </form>
       </div>
       <img
             src="{{ asset('assets/images/LOGO_RUANG_SEDUH(coklat).png') }}"
@@ -258,14 +262,36 @@
 
     <div class="categories">
       <div class="chip active" data-category="Semua">Semua</div>
-      <div class="chip" data-category="Coffee Based">Coffee Based</div>
-      <div class="chip" data-category="Non-Coffee">Non-Coffee</div>
-      <div class="chip" data-category="Pastry">Pastry</div>
+      @foreach($categories as $category)
+        <div class="chip" data-category="{{ $category->name }}">{{ $category->name }}</div>
+      @endforeach
     </div>
 
     <div class="section-title" id="sectionTitle">Semua Menu</div>
 
-    <div class="grid" id="menuGrid"></div>
+    <div class="grid" id="menuGrid">
+      @forelse($menus as $index => $menu)
+        <div class="card" data-name="{{ $menu->name }}" data-category="{{ $menu->kategori->name ?? '' }}">
+          <div class="thumb">
+            @if($menu->image)
+              <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}" style="width:100%;height:100%;object-fit:cover;">
+            @else
+              {!! $index % 2 === 0
+                ? '<svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g'. $index .'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d2b1f"/><stop offset="1" stop-color="#1a1210"/></linearGradient></defs><rect width="200" height="140" fill="#1a1210"/><ellipse cx="100" cy="70" rx="55" ry="38" fill="url(#g'. $index .')"/><rect x="60" y="60" width="80" height="55" rx="8" fill="#3d2b1f" opacity="0.9"/><ellipse cx="100" cy="60" rx="40" ry="14" fill="#1a1210" opacity="0.85"/></svg>'
+                : '<svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="p'. $index .'" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#e0a83c"/><stop offset="1" stop-color="#a5501c"/></radialGradient></defs><rect width="200" height="140" fill="#a5501c"/><ellipse cx="100" cy="75" rx="70" ry="42" fill="url(#p'. $index .')"/><path d="M50 80 Q100 40 150 80" stroke="#a5501c" stroke-width="4" fill="none" opacity="0.5"/></svg>'
+              !!}
+            @endif
+          </div>
+          <div class="card-body">
+            <div class="card-tag">{{ $menu->kategori->name ?? 'Lainnya' }}</div>
+            <div class="card-name">{{ $menu->name }}</div>
+            <div class="card-price">{{ $menu->hargaRupiah() }}</div>
+          </div>
+        </div>
+      @empty
+        <div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:30px 0; font-size:13px;">Menu tidak tersedia</div>
+      @endforelse
+    </div>
 
   </div>
 
@@ -303,92 +329,46 @@
 </div>
 
 <script>
-  // ---- Data menu ----
-  const menu = [
-    { tag:"Coffee Based", name:"Americano", price:"Rp 23.000", grad:["#3d2b1f","#1a1210"], drink:true },
-    { tag:"Coffee Based", name:"Espresso", price:"Rp 21.000", grad:["#5c3a24","#2b1a10"], drink:true },
-    { tag:"Coffee Based", name:"Cappuccino", price:"Rp 29.000", grad:["#c9a06b","#8a5a2f"], drink:true },
-    { tag:"Coffee Based", name:"Mochaccino", price:"Rp 30.000", grad:["#7a4a2b","#3c2413"], drink:true },
-    { tag:"Coffee Based", name:"Cafe Latte", price:"Rp 29.000", grad:["#c9ad7e","#7a4a2b"], drink:true },
-    { tag:"Coffee Based", name:"Avocado Coffee", price:"Rp 32.000", grad:["#7a9a5a","#3f5c2c"], drink:true },
-    { tag:"Coffee Based", name:"Vietnam Drip", price:"Rp 27.000", grad:["#6b4a2c","#241713"], drink:true },
-    { tag:"Coffee Based", name:"Affogato", price:"Rp 32.000", grad:["#e8d9b5","#a5764a"], drink:true },
-    { tag:"Coffee Based", name:"Flat White", price:"Rp 29.000", grad:["#4a7ab5","#e8e0d0"], drink:true },
-    { tag:"Coffee Based", name:"Pistachio Macchiato", price:"Rp 33.000", grad:["#8ba05a","#dbe0c0"], drink:true },
-    { tag:"Non-Coffee", name:"Ice Lemon Tea", price:"Rp 15.000", grad:["#e8c14a","#f2e07a"], drink:true },
-    { tag:"Non-Coffee", name:"Thai Tea", price:"Rp 18.000", grad:["#e08a3c","#b5541e"], drink:true },
-    { tag:"Non-Coffee", name:"Matcha Latte", price:"Rp 17.000", grad:["#8bb35a","#4f7a2e"], drink:true },
-    { tag:"Pastry", name:"Butter Croissant", price:"Rp 14.000", grad:["#e0a83c","#a5501c"], drink:false },
-    { tag:"Pastry", name:"Cheese Danish", price:"Rp 16.000", grad:["#e8c96a","#c98a2e"], drink:false },
-    { tag:"Pastry", name:"Sausage Roll", price:"Rp 17.000", grad:["#a5601c","#5c2f10"], drink:false },
-  ];
-
-  function drinkSVG(id, c1, c2){
-    return `
-    <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="${c1}"/>
-          <stop offset="1" stop-color="${c2}"/>
-        </linearGradient>
-      </defs>
-      <rect width="200" height="140" fill="${c2}"/>
-      <ellipse cx="100" cy="70" rx="55" ry="38" fill="url(#g${id})"/>
-      <rect x="60" y="60" width="80" height="55" rx="8" fill="${c1}" opacity="0.9"/>
-      <ellipse cx="100" cy="60" rx="40" ry="14" fill="${c2}" opacity="0.85"/>
-    </svg>`;
-  }
-
-  function pastrySVG(id, c1, c2){
-    return `
-    <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <radialGradient id="p${id}" cx="50%" cy="40%" r="70%">
-          <stop offset="0" stop-color="${c1}"/>
-          <stop offset="1" stop-color="${c2}"/>
-        </radialGradient>
-      </defs>
-      <rect width="200" height="140" fill="${c2}"/>
-      <ellipse cx="100" cy="75" rx="70" ry="42" fill="url(#p${id})"/>
-      <path d="M50 80 Q100 40 150 80" stroke="${c2}" stroke-width="4" fill="none" opacity="0.5"/>
-    </svg>`;
-  }
-
   const grid = document.getElementById('menuGrid');
   const sectionTitle = document.getElementById('sectionTitle');
   const searchInput = document.getElementById('searchInput');
+  const cards = Array.from(document.querySelectorAll('#menuGrid .card'));
 
   function renderMenu(){
     const activeChip = document.querySelector('.chip.active');
     const category = activeChip ? activeChip.dataset.category : 'Semua';
     const keyword = searchInput.value.trim().toLowerCase();
 
-    const filtered = menu.filter(item=>{
-      const matchCategory = category === 'Semua' || item.tag === category;
-      const matchKeyword = item.name.toLowerCase().includes(keyword);
-      return matchCategory && matchKeyword;
+    let visible = 0;
+    cards.forEach(card=>{
+      const name = card.dataset.name || '';
+      const cat = card.dataset.category || '';
+
+      const matchCategory = category === 'Semua' || cat === category;
+      const matchKeyword = name.toLowerCase().includes(keyword);
+
+      if (matchCategory && matchKeyword){
+        card.style.display = '';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
     });
 
     sectionTitle.textContent = category === 'Semua' ? 'Semua Menu' : category;
 
-    grid.innerHTML = '';
-    if(filtered.length === 0){
-      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:30px 0; font-size:13px;">Menu tidak ditemukan</div>`;
-      return;
+    let empty = grid.querySelector('.grid-empty');
+    if (visible === 0){
+      if (!empty){
+        empty = document.createElement('div');
+        empty.className = 'grid-empty';
+        empty.style.cssText = 'grid-column:1/-1; text-align:center; color:var(--muted); padding:30px 0; font-size:13px;';
+        empty.textContent = 'Menu tidak ditemukan';
+        grid.appendChild(empty);
+      }
+    } else if (empty){
+      empty.remove();
     }
-    filtered.forEach((item, i)=>{
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="thumb">${ item.drink ? drinkSVG(i, item.grad[0], item.grad[1]) : pastrySVG(i, item.grad[0], item.grad[1]) }</div>
-        <div class="card-body">
-          <div class="card-tag">${item.tag}</div>
-          <div class="card-name">${item.name}</div>
-          <div class="card-price">${item.price}</div>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
   }
 
   renderMenu();
