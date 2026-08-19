@@ -17,13 +17,14 @@ class UserRoleTableSeeder extends Seeder
      */
     public function run()
     {
-        UserRole::create([
-            'id_user' => Users::where('email', 'superadmin@mail.com')->first()->id,
-            'id_role' => Role::where('role', 'Super Admin')->first()->id
-        ]);
-        UserRole::create([
-            'id_user' => Users::where('email', 'superadmin@mail.com')->first()->id,
-            'id_role' => Role::where('role', 'Admin')->first()->id
-        ]);
+        $user = Users::where('email', 'superadmin@mail.com')->firstOrFail();
+
+        foreach (['Super Admin', 'Admin'] as $roleName) {
+            $role = Role::where('role', $roleName)->firstOrFail();
+            UserRole::firstOrCreate([
+                'id_user' => $user->id,
+                'id_role' => $role->id,
+            ]);
+        }
     }
 }
