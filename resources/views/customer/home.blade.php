@@ -129,11 +129,14 @@
     gap:14px;
   }
   .card{
+    display:block;
     background:var(--card-bg);
     border-radius:16px;
     overflow:hidden;
     box-shadow: 0 4px 14px rgba(0,0,0,.05);
     cursor:pointer;
+    text-decoration:none;
+    color:inherit;
     transition: transform .15s ease;
   }
   .card:hover{ transform: translateY(-3px); }
@@ -244,10 +247,6 @@
       <div>
         <div class="greet-sub">Selamat Datang,</div>
         <div class="greet-name">{{ Auth::guard('customer')->user()->name ?? 'Pengunjung' }}</div>
-        <form method="POST" action="{{ route('customer.logout') }}" style="margin-top:8px;">
-          @csrf
-          <button type="submit" style="background:none;border:none;padding:0;font-size:13px;font-weight:600;color:var(--maroon);cursor:pointer;text-decoration:underline;">Keluar</button>
-        </form>
       </div>
       <img
             src="{{ asset('assets/images/LOGO_RUANG_SEDUH(coklat).png') }}"
@@ -271,7 +270,7 @@
 
     <div class="grid" id="menuGrid">
       @forelse($menus as $index => $menu)
-        <div class="card" data-name="{{ $menu->name }}" data-category="{{ $menu->kategori->name ?? '' }}">
+        <a href="{{ route('customer.menu.show', $menu->id) }}" class="card" data-name="{{ $menu->name }}" data-category="{{ $menu->kategori->name ?? '' }}">
           <div class="thumb">
             @if($menu->image)
               <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}" style="width:100%;height:100%;object-fit:cover;">
@@ -287,7 +286,7 @@
             <div class="card-name">{{ $menu->name }}</div>
             <div class="card-price">{{ $menu->hargaRupiah() }}</div>
           </div>
-        </div>
+        </a>
       @empty
         <div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:30px 0; font-size:13px;">Menu tidak tersedia</div>
       @endforelse
@@ -297,20 +296,20 @@
 
   <div class="navbar-wrap">
   <nav class="navbar" id="navbar">
-    <button class="nav-item" data-name="profile" aria-label="Profil">
+    <a href="{{ route('customer.profile.index') }}" class="nav-item" data-name="profile" aria-label="Profil">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
-    </button>
-    <button class="nav-item" data-name="history" aria-label="Riwayat">
+    </a>
+    <a href="{{ route('customer.order.history') }}" class="nav-item" data-name="history" aria-label="Riwayat">
       <svg viewBox="0 0 24 24">
         <rect x="5" y="4" width="14" height="17" rx="2"/>
         <path d="M9 2h6v3H9z"/>
         <circle cx="12" cy="14" r="3.2"/>
         <path d="M12 12.5v1.7l1.2 1"/>
       </svg>
-    </button>
-    <button class="nav-item active" data-name="home" aria-label="Beranda">
+    </a>
+    <a href="{{ route('customer.home') }}" class="nav-item active" data-name="home" aria-label="Beranda">
       <svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></svg>
-    </button>
+    </a>
     <button class="nav-item" data-name="cart" aria-label="Keranjang">
       <svg viewBox="0 0 24 24">
         <path d="M4 5h2l1.5 10.5A2 2 0 0 0 9.5 17h7a2 2 0 0 0 2-1.7L20 8H6.2"/>
