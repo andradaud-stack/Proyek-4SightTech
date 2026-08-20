@@ -6,7 +6,7 @@ namespace App\Modules\Orders\Models;
 
 
 
-use App\Modules\Order\_items\Models\Order_items;
+use App\Modules\Order_items\Models\Order_items;
 
 use App\Modules\Pengguna\Models\Pengguna;
 
@@ -60,7 +60,7 @@ public function orderItems()
 
 {
 
-	return $this->hasMany(Order\_items::class, 'order_id');
+	return $this->hasMany(Order_items::class, 'order_id');
 
 }
 
