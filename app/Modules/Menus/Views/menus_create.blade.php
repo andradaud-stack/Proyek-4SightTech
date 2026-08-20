@@ -30,7 +30,7 @@
                 @include('include.flash')
                 <form class="form form-horizontal" action="{{ route('menus.store') }}" method="POST" enctype="multipart/form-data">
                     <div class="form-body">
-                        @csrf 
+                        @csrf
                         @foreach ($forms as $key => $field)
                             <div class="row mb-3">
                                 <div class="col-md-3 text-sm-start text-md-end pt-2">
@@ -46,6 +46,23 @@
                                 </div>
                             </div>
                         @endforeach
+                        <div class="row mb-3">
+                            <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                <label>Varian</label>
+                            </div>
+                            <div class="col-md-9 form-group">
+                                <div class="d-flex gap-4 pt-2">
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="variants[]" value="Ice" @checked(in_array('Ice', old('variants', ['Ice', 'Hot'])))>
+                                        <span class="form-check-label">Ice</span>
+                                    </label>
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="variants[]" value="Hot" @checked(in_array('Hot', old('variants', ['Ice', 'Hot'])))>
+                                        <span class="form-check-label">Hot</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="offset-md-3 ps-2 pt-2 d-flex gap-2">
                             <button class="btn btn-primary icon icon-left" type="submit"><i class="fa fa-arrow-right"></i> Simpan</button>
                             <a href="{{ route('menus.index') }}" class="btn btn-outline-secondary">Batal</a>

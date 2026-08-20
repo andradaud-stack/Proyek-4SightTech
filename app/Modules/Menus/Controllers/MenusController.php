@@ -39,7 +39,7 @@ class MenusController extends Controller
 	public function create(Request $request)
 	{
 		$ref_categories = Categories::all()->pluck('name','id');
-		
+
 		$data['forms'] = array(
 			'category_id' => ['label' => 'Category Id', 'type' => 'select', 'value' => old("category_id"), 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2'],
 			'name' => ['label' => 'Name', 'type' => 'text', 'value' => old("name"), 'required' => true],
@@ -48,7 +48,7 @@ class MenusController extends Controller
 			'price' => ['label' => 'Price', 'type' => 'text', 'value' => old("price"), 'required' => true],
 			'stock' => ['label' => 'Stock', 'type' => 'text', 'value' => old("stock"), 'required' => true],
 			'is_active' => ['label' => 'Is Active', 'type' => 'select', 'value' => old("is_active"), 'required' => true, 'options' => ['1' => 'Ya', '0' => 'Tidak']],
-			
+
 		);
 
 		$this->log($request, 'membuka form tambah '.$this->title);
@@ -65,7 +65,8 @@ class MenusController extends Controller
 			'price' => 'required',
 			'stock' => 'required',
 			'is_active' => 'required',
-			
+			'variants' => 'nullable|array',
+
 		]);
 
 		$menus = new Menus();
@@ -76,7 +77,8 @@ class MenusController extends Controller
 		$menus->price = $request->input("price");
 		$menus->stock = $request->input("stock");
 		$menus->is_active = $request->input("is_active");
-		
+		$menus->variants = $request->input('variants', ['Ice', 'Hot']);
+
 		$menus->created_by = Auth::id();
 		$menus->save();
 
@@ -99,7 +101,7 @@ class MenusController extends Controller
 		$data['menus'] = $menus;
 
 		$ref_categories = Categories::all()->pluck('name','id');
-		
+
 		$data['forms'] = array(
 			'category_id' => ['label' => 'Category Id', 'type' => 'select', 'value' => $menus->category_id, 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2', 'id' => 'category_id'],
 			'name' => ['label' => 'Name', 'type' => 'text', 'value' => $menus->name, 'required' => true, 'id' => 'name'],
@@ -108,7 +110,7 @@ class MenusController extends Controller
 			'price' => ['label' => 'Price', 'type' => 'text', 'value' => $menus->price, 'required' => true, 'id' => 'price'],
 			'stock' => ['label' => 'Stock', 'type' => 'text', 'value' => $menus->stock, 'required' => true, 'id' => 'stock'],
 			'is_active' => ['label' => 'Is Active', 'type' => 'select', 'value' => $menus->is_active, 'required' => true, 'options' => ['1' => 'Ya', '0' => 'Tidak'], 'id' => 'is_active'],
-			
+
 		);
 
 		$text = 'membuka form edit '.$this->title;//.' '.$menus->what;
@@ -126,7 +128,8 @@ class MenusController extends Controller
 			'price' => 'required',
 			'stock' => 'required',
 			'is_active' => 'required',
-			
+			'variants' => 'nullable|array',
+
 		]);
 
 		$menus = Menus::find($id);
@@ -138,7 +141,8 @@ class MenusController extends Controller
 		$menus->price = $request->input("price");
 		$menus->stock = $request->input("stock");
 		$menus->is_active = $request->input("is_active");
-		
+		$menus->variants = $request->input('variants', ['Ice', 'Hot']);
+
 		$menus->updated_by = Auth::id();
 		$menus->save();
 

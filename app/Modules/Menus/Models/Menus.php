@@ -12,7 +12,7 @@ class Menus extends Model
 {
 	use SoftDeletes;
 
-	protected $casts      = ['deleted_at' => 'datetime', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+	protected $casts      = ['deleted_at' => 'datetime', 'created_at' => 'datetime', 'updated_at' => 'datetime', 'variants' => 'array'];
 	protected $table      = 'menus';
 	protected $fillable   = ['*'];
 
