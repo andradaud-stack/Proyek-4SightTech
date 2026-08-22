@@ -14,6 +14,10 @@ Route::put('/customer/profile/password', [CustomerController::class, 'changePass
 Route::get('/customer/profile/edit', [CustomerController::class, 'editProfile'])->middleware('customer.auth')->name('customer.profile.edit');
 Route::put('/customer/profile', [CustomerController::class, 'updateProfile'])->middleware('customer.auth')->name('customer.profile.update');
 
+Route::get('/customer/cart', [CustomerController::class, 'cartIndex'])->middleware('customer.auth')->name('customer.cart.index');
+Route::post('/customer/cart', [CustomerController::class, 'addToCart'])->middleware('customer.auth')->name('customer.cart.add');
+Route::post('/customer/cart/update', [CustomerController::class, 'cartUpdate'])->middleware('customer.auth')->name('customer.cart.update');
+
 Route::middleware('customer.guest')->group(function () {
     Route::get('/', [CustomerController::class,'index'])->name('frontend.index');
     Route::get('customer/login', [CustomerAuthController::class, 'showLogin'])->name('customer.login');

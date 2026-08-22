@@ -22,7 +22,7 @@ class Permission
 
 		$action = config('laralag.translate_action')[$action] ?? null;
 		$privileges = session('privileges');
-		return $privileges[$menu][$action] ?? true;
+		return $privileges[$menu][$action] ?? false;
 	}
 
 	public static function getMenu($id_role)

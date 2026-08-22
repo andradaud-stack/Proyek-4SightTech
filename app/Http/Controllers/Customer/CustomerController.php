@@ -119,4 +119,71 @@ public function showRegister()
 
         return redirect()->route('customer.profile.index')->with('message_success', 'Kata sandi berhasil diubah.');
     }
+
+    public function cartIndex()
+    {
+        $cart = session('cart', []);
+
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['qty'];
+        }
+
+        return view('customer.cart.index', compact('cart', 'total'));
+    }
+
+    public function addToCart(Request $request)
+    {
+        $request->validate([
+            'product_id' => ['required', 'integer', 'exists:menus,id'],
+            'variant'    => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $menu = Menus::findOrFail($request->product_id);
+
+        if (! $menu->is_active) {
+            return back()->with('message_error', 'Menu sedang tidak tersedia.');
+        }
+
+        $variant = $request->input('variant');
+        $key     = $menu->id . '_' . ($variant ?? 'DEFAULT');
+
+        $cart = session('cart', []);
+
+        if (isset($cart[$key])) {
+            $cart[$key]['qty']++;
+        } else {
+            $cart[$key] = [
+                'menu_id' => $menu->id,
+                'name'    => $menu->name,
+                'variant' => $variant,
+                'price'   => $menu->price,
+                'qty'     => 1,
+                'image'   => $menu->image,
+            ];
+        }
+
+        session(['cart' => $cart]);
+
+        return redirect()->route('customer.cart.index');
+    }
+
+    public function cartUpdate(Request $request)
+    {
+        $key  = $request->input('key');
+        $qty  = max(0, (int) $request->input('qty'));
+        $cart = session('cart', []);
+
+        if (isset($cart[$key])) {
+            if ($qty <= 0) {
+                unset($cart[$key]);
+            } else {
+                $cart[$key]['qty'] = $qty;
+            }
+        }
+
+        session(['cart' => $cart]);
+
+        return back();
+    }
 }
