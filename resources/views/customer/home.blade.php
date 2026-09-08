@@ -55,7 +55,7 @@
     color:var(--dark);
   }
   .logo{
-    width: 130px;
+    width: 75px;
     height: auto; 
     object-fit: contain; 
   }
