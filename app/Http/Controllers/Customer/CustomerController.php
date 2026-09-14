@@ -64,7 +64,7 @@ public function showRegister()
     {
         $user = Auth::guard('customer')->user();
 
-        $orders = Orders::with(['orderItems', 'tabel'])
+        $orders = Orders::with(['orderItems.menu.category', 'tabel'])
             ->where('pengguna_id', $user->id)
             ->latest()
             ->get();
@@ -79,6 +79,8 @@ public function showRegister()
         if ($order->pengguna_id !== $user->id) {
             abort(404);
         }
+
+        $order->load(['orderItems.menu.category', 'tabel']);
 
         return view('customer.order.detail', compact('order'));
     }
@@ -289,8 +291,9 @@ public function showRegister()
         }
 
         $order = DB::transaction(function () use ($cart, $request, $table, $total) {
+            $customerId = Auth::guard('customer')->id();
             $orderData = [
-                'pengguna_id' => Auth::guard('customer')->id(),
+                'pengguna_id' => $customerId,
                 'table_id' => $table->id,
                 'status' => 'menunggu_konfirmasi',
                 'metode_pembayaran' => $request->metode_pembayaran,
@@ -299,7 +302,7 @@ public function showRegister()
             ];
 
             if (Schema::hasColumn('orders', 'user_id')) {
-                $orderData['user_id'] = null;
+                $orderData['user_id'] = $customerId ? (string) $customerId : null;
             }
 
             $order = Orders::create($orderData);

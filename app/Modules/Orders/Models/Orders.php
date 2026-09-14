@@ -14,6 +14,7 @@ class Orders extends Model
     protected $casts    = ['deleted_at' => 'datetime', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
     protected $table    = 'orders';
     protected $fillable = [
+        'user_id',
         'pengguna_id',
         'table_id',
         'status',
@@ -24,6 +25,31 @@ class Orders extends Model
         'updated_by',
         'deleted_by',
     ];
+
+    public function getUserIdAttribute($value)
+    {
+        return $value ?? ($this->pengguna_id ? (string) $this->pengguna_id : null);
+    }
+
+    public function getStatusPembayaranLabelAttribute(): string
+    {
+        return match (strtolower($this->status_pembayaran ?? '')) {
+            'sudah_bayar', 'lunas', 'paid' => 'Sudah Dibayar',
+            'belum_bayar', 'unpaid' => 'Belum Bayar',
+            'dibatalkan', 'cancelled', 'batal' => 'Dibatalkan',
+            default => ucfirst(str_replace('_', ' ', $this->status_pembayaran ?? 'Belum Bayar')),
+        };
+    }
+
+    public function isPaid(): bool
+    {
+        return in_array(strtolower($this->status_pembayaran ?? ''), ['sudah_bayar', 'lunas', 'paid']);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
 
     public function pengguna()
     {
@@ -36,6 +62,11 @@ class Orders extends Model
     }
 
     public function orderItems()
+    {
+	    return $this->hasMany(Order_items::class, 'order_id');
+    }
+
+    public function order_items()
     {
 	    return $this->hasMany(Order_items::class, 'order_id');
     }

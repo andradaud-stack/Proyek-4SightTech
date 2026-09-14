@@ -167,6 +167,18 @@
                                 <span class="order-info-value">{{ ucfirst($order->metode_pembayaran ?? '-') }}</span>
                             </div>
                             <div class="order-info-item">
+                                <span class="order-info-label">Status Pembayaran</span>
+                                <span class="order-info-value">
+                                    @if(in_array(strtolower($order->status_pembayaran ?? ''), ['sudah_bayar', 'lunas', 'paid']))
+                                        <span class="badge bg-success">Sudah Dibayar</span>
+                                    @elseif(in_array(strtolower($order->status_pembayaran ?? ''), ['dibatalkan', 'batal']))
+                                        <span class="badge bg-danger">Dibatalkan</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Belum Bayar</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="order-info-item">
                                 <span class="order-info-label">Total</span>
                                 <span class="order-info-value">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
                             </div>
@@ -210,6 +222,17 @@
                                     <input type="hidden" name="status" value="selesai">
                                     <button type="submit" class="status-btn status-btn-primary">
                                         ✓ Selesai
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if(!in_array(strtolower($order->status_pembayaran ?? ''), ['sudah_bayar', 'lunas', 'paid']) && $order->status !== 'dibatalkan')
+                                <form action="{{ route('orders.update-status', $order->id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <input type="hidden" name="status_pembayaran" value="sudah_bayar">
+                                    <button type="submit" class="status-btn" style="background-color: #10b981; color: white;" onclick="return confirm('Konfirmasi bahwa pembayaran untuk pesanan #{{ $order->id }} sudah diterima?')">
+                                        ✓ Konfirmasi Bayar
                                     </button>
                                 </form>
                             @endif

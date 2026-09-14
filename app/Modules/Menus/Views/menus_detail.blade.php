@@ -32,6 +32,7 @@
                     <div class="col-lg-10 offset-lg-2">
                         <div class="row kt-detail-grid">
                             <div class='col-lg-2'><p>Category Id</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->category_id }}</p></div>
+                            <div class='col-lg-2'><p>Category</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->category->name ?? '-' }}</p></div>
 									<div class='col-lg-2'><p>Name</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->name }}</p></div>
 									<div class='col-lg-2'><p>Description</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $menus->description }}</p></div>
 									<div class='col-lg-2'><p>Image</p></div><div class='col-lg-10'>

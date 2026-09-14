@@ -21,6 +21,11 @@ class Menus extends Model
 		return $this->belongsTo(Categories::class, 'category_id');
 	}
 
+	public function category()
+	{
+		return $this->belongsTo(Categories::class, 'category_id');
+	}
+
 	public function orderItems()
 	{
 		return $this->hasMany(Order_items::class, 'menu_id');

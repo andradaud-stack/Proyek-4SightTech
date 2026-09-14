@@ -24,7 +24,7 @@ class OrdersController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = Orders::query();
+		$query = Orders::with(['user', 'pengguna', 'tabel', 'orderItems.menu.category']);
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
@@ -84,6 +84,7 @@ class OrdersController extends Controller
 
 	public function show(Request $request, Orders $orders)
 	{
+		$orders->load(['user', 'pengguna', 'tabel', 'orderItems.menu.category']);
 		$data['orders'] = $orders;
 
 		$text = 'melihat detail '.$this->title;//.' '.$orders->what;
@@ -99,13 +100,26 @@ class OrdersController extends Controller
 		$ref_tables = Tables::all()->pluck('table_number','id');
 		
 		$data['forms'] = array(
-			'user_id' => ['label' => 'User Id', 'type' => 'select', 'value' => $orders->user_id, 'required' => true, 'options' => $ref_users->all(), 'class' => 'select2', 'id' => 'user_id'],
+			'user_id' => ['label' => 'User Id', 'type' => 'select', 'value' => $orders->user_id, 'required' => false, 'options' => $ref_users->all(), 'class' => 'select2', 'id' => 'user_id'],
 			'table_id' => ['label' => 'Table Id', 'type' => 'select', 'value' => $orders->table_id, 'required' => true, 'options' => $ref_tables->all(), 'class' => 'select2', 'id' => 'table_id'],
-			'status' => ['label' => 'Status', 'type' => 'text', 'value' => $orders->status, 'required' => true, 'id' => 'status'],
-			'metode_pembayaran' => ['label' => 'Metode Pembayaran', 'type' => 'text', 'value' => $orders->metode_pembayaran, 'required' => false, 'id' => 'metode_pembayaran'],
-			'status_pembayaran' => ['label' => 'Status Pembayaran', 'type' => 'text', 'value' => $orders->status_pembayaran, 'required' => true, 'id' => 'status_pembayaran'],
+			'status' => ['label' => 'Status', 'type' => 'select', 'value' => $orders->status, 'required' => true, 'id' => 'status', 'options' => [
+				'menunggu_konfirmasi' => 'Menunggu Konfirmasi',
+				'diproses' => 'Diproses',
+				'siap_disajikan' => 'Siap Disajikan',
+				'selesai' => 'Selesai',
+				'dibatalkan' => 'Dibatalkan',
+			]],
+			'metode_pembayaran' => ['label' => 'Metode Pembayaran', 'type' => 'select', 'value' => $orders->metode_pembayaran, 'required' => false, 'id' => 'metode_pembayaran', 'options' => [
+				'Tunai' => 'Tunai di Kasir',
+				'Qris' => 'QRIS',
+				'Transfer Bank' => 'Transfer Bank',
+			]],
+			'status_pembayaran' => ['label' => 'Status Pembayaran', 'type' => 'select', 'value' => $orders->status_pembayaran, 'required' => true, 'id' => 'status_pembayaran', 'options' => [
+				'belum_bayar' => 'Belum Bayar',
+				'sudah_bayar' => 'Sudah Dibayar',
+				'dibatalkan' => 'Dibatalkan',
+			]],
 			'total' => ['label' => 'Total', 'type' => 'text', 'value' => $orders->total, 'required' => true, 'id' => 'total'],
-			
 		);
 
 		$text = 'membuka form edit '.$this->title;//.' '.$orders->what;
@@ -116,21 +130,28 @@ class OrdersController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
-			'user_id' => 'required',
+			'user_id' => 'nullable',
 			'table_id' => 'required',
-			'status' => 'required',
+			'status' => 'required|in:menunggu_konfirmasi,diproses,siap_disajikan,selesai,dibatalkan',
 			'metode_pembayaran' => 'required',
-			'status_pembayaran' => 'required',
+			'status_pembayaran' => 'required|in:belum_bayar,sudah_bayar,lunas,dibatalkan',
 			'total' => 'required',
-			
 		]);
 
 		$orders = Orders::find($id);
-		$orders->user_id = $request->input("user_id");
+		if ($request->filled('user_id')) {
+			$orders->user_id = $request->input("user_id");
+		}
 		$orders->table_id = $request->input("table_id");
 		$orders->status = $request->input("status");
 		$orders->metode_pembayaran = $request->input("metode_pembayaran");
 		$orders->status_pembayaran = $request->input("status_pembayaran");
+
+		// Jika admin memilih status selesai dan pembayaran masih belum_bayar, sinkronkan ke sudah_bayar
+		if ($orders->status === 'selesai' && $orders->status_pembayaran === 'belum_bayar') {
+			$orders->status_pembayaran = 'sudah_bayar';
+		}
+
 		$orders->total = $request->input("total");
 		
 		$orders->updated_by = Auth::id();
@@ -157,7 +178,7 @@ class OrdersController extends Controller
 	public function management(Request $request)
 	{
 		// Show only customer orders (those with pengguna_id)
-		$orders = Orders::with(['pengguna', 'tabel', 'orderItems'])
+		$orders = Orders::with(['user', 'pengguna', 'tabel', 'orderItems.menu.category'])
 			->whereNotNull('pengguna_id')
 			->whereIn('status', ['menunggu_konfirmasi', 'diproses', 'siap_disajikan'])
 			->orderBy('created_at', 'desc')
@@ -170,16 +191,41 @@ class OrdersController extends Controller
 	public function updateStatus(Request $request, Orders $orders)
 	{
 		$this->validate($request, [
-			'status' => 'required|in:menunggu_konfirmasi,diproses,siap_disajikan,selesai,dibatalkan'
+			'status' => 'nullable|in:menunggu_konfirmasi,diproses,siap_disajikan,selesai,dibatalkan',
+			'status_pembayaran' => 'nullable|in:belum_bayar,sudah_bayar,lunas,dibatalkan',
 		]);
 
-		$oldStatus = $orders->status;
-		$orders->status = $request->input('status');
+		$changes = [];
+
+		if ($request->filled('status')) {
+			$oldStatus = $orders->status;
+			$newStatus = $request->input('status');
+			$orders->status = $newStatus;
+			$changes[] = "status: {$oldStatus} -> {$newStatus}";
+
+			// Logika konsistensi status pembayaran:
+			// Jika pesanan diselesaikan (selesai), status pembayaran dipastikan lunas/sudah_bayar
+			if ($newStatus === 'selesai' && ! $orders->isPaid()) {
+				$orders->status_pembayaran = 'sudah_bayar';
+				$changes[] = "status_pembayaran -> sudah_bayar";
+			} elseif ($newStatus === 'dibatalkan' && ! $orders->isPaid()) {
+				$orders->status_pembayaran = 'dibatalkan';
+				$changes[] = "status_pembayaran -> dibatalkan";
+			}
+		}
+
+		if ($request->filled('status_pembayaran')) {
+			$oldPayment = $orders->status_pembayaran;
+			$newPayment = $request->input('status_pembayaran');
+			$orders->status_pembayaran = $newPayment;
+			$changes[] = "status_pembayaran: {$oldPayment} -> {$newPayment}";
+		}
+
 		$orders->updated_by = Auth::id();
 		$orders->save();
 
-		$this->log($request, "mengubah status pesanan dari {$oldStatus} ke {$orders->status}", ['orders.id' => $orders->id]);
+		$this->log($request, "mengubah status pesanan (" . implode(', ', $changes) . ")", ['orders.id' => $orders->id]);
 		
-		return back()->with('message_success', "Status pesanan berhasil diubah menjadi " . ucfirst(str_replace('_', ' ', $orders->status)) . "!");
+		return back()->with('message_success', "Status pesanan berhasil diperbarui!");
 	}
 }

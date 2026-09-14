@@ -25,7 +25,7 @@ class MenusController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = Menus::query();
+		$query = Menus::with('category');
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
@@ -42,6 +42,7 @@ class MenusController extends Controller
 
 		$data['forms'] = array(
 			'category_id' => ['label' => 'Category Id', 'type' => 'select', 'value' => old("category_id"), 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2'],
+			'category_id' => ['label' => 'Category', 'type' => 'select', 'value' => old("category_id"), 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2'],
 			'name' => ['label' => 'Name', 'type' => 'text', 'value' => old("name"), 'required' => true],
 			'description' => ['label' => 'Description', 'type' => 'textarea', 'value' => old("description"), 'required' => true],
 			'image' => ['label' => 'Image', 'type' => 'file', 'value' => old("image"), 'required' => false, 'accept' => 'image/*'],
@@ -89,6 +90,7 @@ class MenusController extends Controller
 
 	public function show(Request $request, Menus $menus)
 	{
+		$menus->load('category');
 		$data['menus'] = $menus;
 
 		$text = 'melihat detail '.$this->title;//.' '.$menus->what;
@@ -104,6 +106,7 @@ class MenusController extends Controller
 
 		$data['forms'] = array(
 			'category_id' => ['label' => 'Category Id', 'type' => 'select', 'value' => $menus->category_id, 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2', 'id' => 'category_id'],
+			'category_id' => ['label' => 'Category', 'type' => 'select', 'value' => $menus->category_id, 'required' => true, 'options' => $ref_categories->all(), 'class' => 'select2', 'id' => 'category_id'],
 			'name' => ['label' => 'Name', 'type' => 'text', 'value' => $menus->name, 'required' => true, 'id' => 'name'],
 			'description' => ['label' => 'Description', 'type' => 'textarea', 'value' => $menus->description, 'required' => true, 'id' => 'description'],
 			'image' => ['label' => 'Image', 'type' => 'file', 'value' => $menus->image, 'required' => false, 'accept' => 'image/*', 'id' => 'image'],

@@ -59,7 +59,12 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->user_id }}</td>
+                                    <td>
+                                        <span>{{ $item->user_id ?? $item->pengguna_id ?? '-' }}</span>
+                                        @if($item->pengguna)
+                                            <small class="text-muted d-block">{{ $item->pengguna->name }}</small>
+                                        @endif
+                                    </td>
 									<td>{{ $item->table_id }}</td>
 												<td>
                                             @php
@@ -80,8 +85,32 @@
                                             <span class="badge bg-light-secondary text-secondary">{{ $statusMap[$item->status] ?? ucfirst(str_replace('_', ' ', $item->status)) }}</span>
                                         </td>
 												<td>{{ $item->metode_pembayaran }}</td>
-												<td>{{ $item->status_pembayaran }}</td>
-												<td>{{ $item->total }}</td>
+												<td>
+                                                    @php
+                                                        $isPaid = in_array(strtolower($item->status_pembayaran ?? ''), ['sudah_bayar', 'lunas', 'paid']);
+                                                        $isCancelled = in_array(strtolower($item->status_pembayaran ?? ''), ['dibatalkan', 'batal']);
+                                                    @endphp
+                                                    @if($isPaid)
+                                                        <span class="badge bg-light-success text-success fw-bold">Sudah Dibayar</span>
+                                                    @elseif($isCancelled)
+                                                        <span class="badge bg-light-danger text-danger fw-bold">Dibatalkan</span>
+                                                    @else
+                                                        <span class="badge bg-light-warning text-warning fw-bold mb-1 d-inline-block">Belum Bayar</span>
+                                                        @if($item->status !== 'dibatalkan')
+                                                            <div>
+                                                                <form action="{{ route('orders.update-status', $item->id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('PATCH')
+                                                                    <input type="hidden" name="status_pembayaran" value="sudah_bayar">
+                                                                    <button type="submit" class="btn btn-xs btn-outline-success py-0 px-1" style="font-size: 0.72rem;" onclick="return confirm('Konfirmasi bahwa pesanan #{{ $item->id }} sudah dibayar?')">
+                                                                        ✓ Konfirmasi Bayar
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    @endif
+                                                </td>
+												<td>Rp {{ number_format($item->total, 0, ',', '.') }}</td>
 												
                                     <td>
                                         @if($nextStatus)
@@ -93,8 +122,6 @@
                                                     {{ $item->status === 'menunggu_konfirmasi' ? 'Konfirmasi' : ($item->status === 'diproses' ? 'Siap Disajikan' : 'Selesai') }}
                                                 </button>
                                             </form>
-                                        @else
-                                            <span class="badge bg-success">Selesai</span>
                                         @endif
                                         <div class="mt-2">
                                             {!! button('orders.show','', $item->id) !!}
