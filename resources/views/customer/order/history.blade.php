@@ -123,48 +123,66 @@
     padding:60px 20px;
   }
 
-  /* Bottom Navbar (fixed to real screen) */
-  .navbar-wrap{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    display:flex;
-    justify-content:center;
-    padding:0 20px 20px;
-    pointer-events:none;
+  /* Bottom Navbar shared with the home page */
+  .navbar-wrap {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 16px 16px;
+    pointer-events: none;
+    z-index: 100;
   }
-  .navbar{
-    width:100%;
-    max-width:440px;
-    pointer-events:auto;
-    display:flex;
-    align-items:center;
-    justify-content:space-around;
-    background:#ffffff;
-    border-radius:999px;
-    padding:14px 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+
+  .navbar {
+    width: 100%;
+    max-width: 440px;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 8px 12px;
+    box-shadow: 0 12px 35px rgba(35, 22, 17, 0.18);
+    border: 1px solid #ebdcd1;
   }
-  .nav-item{
-    background:none;
-    border:none;
-    padding:9px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    text-decoration:none;
+
+  .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 16px;
+    border-radius: 18px;
+    text-decoration: none;
+    color: #8c7f76;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    min-width: 68px;
   }
-  .nav-item img{
-    width:22px;
-    height:22px;
-    object-fit:contain;
+
+  .nav-link svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    transition: stroke 0.2s ease;
   }
-  .nav-item.active{
-    background: var(--accent);
-    box-shadow: 0 0 0 4px #ffffff, 0 4px 10px rgba(224,122,95,0.5);
+
+  .nav-link.active {
+    background: #f4ede6;
+    color: #4a2c20;
+    font-weight: 800;
+  }
+
+  .nav-link.active svg {
+    stroke: #4a2c20;
   }
 
   @media (min-width:700px){
@@ -225,18 +243,22 @@
   </div>
 
   <div class="navbar-wrap">
-    <nav class="navbar">
-      <a href="{{ route('customer.profile.index') }}" class="nav-item" aria-label="Profil">
-        <img src="{{ asset('assets/images/navbar/profile.png') }}" alt="" aria-hidden="true">
+    <nav class="navbar" id="navbar">
+      <a href="{{ route('customer.home') }}" class="nav-link" aria-label="Beranda">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Beranda</span>
       </a>
-      <a href="{{ route('customer.order.history') }}" class="nav-item active" aria-label="Riwayat">
-        <img src="{{ asset('assets/images/navbar/history.png') }}" alt="" aria-hidden="true">
+      <a href="{{ route('customer.order.history') }}" class="nav-link active" aria-label="Riwayat">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Riwayat</span>
       </a>
-      <a href="{{ route('customer.home') }}" class="nav-item" aria-label="Beranda">
-        <img src="{{ asset('assets/images/navbar/home.png') }}" alt="" aria-hidden="true">
+      <a href="{{ route('customer.cart.index') }}" class="nav-link" aria-label="Keranjang">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span>Keranjang</span>
       </a>
-      <a href="{{ route('customer.cart.index') }}" class="nav-item" aria-label="Keranjang">
-        <img src="{{ asset('assets/images/navbar/cart.png') }}" alt="" aria-hidden="true">
+      <a href="{{ route('customer.profile.index') }}" class="nav-link" aria-label="Profil">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profil</span>
       </a>
     </nav>
   </div>
