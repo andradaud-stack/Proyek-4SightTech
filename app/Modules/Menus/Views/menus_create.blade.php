@@ -61,6 +61,7 @@
                                         <span class="form-check-label">Hot</span>
                                     </label>
                                 </div>
+                                <small class="text-muted d-block mt-1">Kosongkan jika menu tidak memiliki varian (misal: Pastry / Makanan).</small>
                             </div>
                         </div>
                         <div class="offset-md-3 ps-2 pt-2 d-flex gap-2">

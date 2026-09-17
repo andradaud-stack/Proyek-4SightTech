@@ -205,7 +205,9 @@
     </div>
 
     @php
-      $variants = $menu->variants ?? ['Ice', 'Hot'];
+      $isPastry = ($menu->kategori && strtolower($menu->kategori->name) === 'pastry')
+               || ($menu->category && strtolower($menu->category->name) === 'pastry');
+      $variants = $isPastry ? [] : ($menu->variants ?? []);
       $stockReady = (int) ($menu->stock ?? 0) > 0;
     @endphp
 

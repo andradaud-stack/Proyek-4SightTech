@@ -31,12 +31,29 @@ public function showRegister()
     return view('customer.auth.register');
 }
 
-    public function home()
+    public function home(Request $request)
     {
+        if ($request->filled('table')) {
+            $table = Tables::where('table_number', $request->query('table'))->first();
+            if ($table) {
+                session(['customer_table_id' => $table->id]);
+            }
+        } elseif ($request->filled('table_id')) {
+            $table = Tables::find($request->query('table_id'));
+            if ($table) {
+                session(['customer_table_id' => $table->id]);
+            }
+        }
+
+        $currentTable = null;
+        if (session('customer_table_id')) {
+            $currentTable = Tables::find(session('customer_table_id'));
+        }
+
         $categories = Categories::orderBy('name')->get();
         $menus      = Menus::active()->with('kategori')->get();
 
-        return view('customer.home', compact('categories', 'menus'));
+        return view('customer.home', compact('categories', 'menus', 'currentTable'));
     }
 
     public function show(Menus $menu)

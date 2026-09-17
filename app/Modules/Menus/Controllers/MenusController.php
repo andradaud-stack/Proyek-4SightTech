@@ -78,7 +78,7 @@ class MenusController extends Controller
 		$menus->price = $request->input("price");
 		$menus->stock = $request->input("stock");
 		$menus->is_active = $request->input("is_active");
-		$menus->variants = $request->input('variants', ['Ice', 'Hot']);
+		$menus->variants = $request->input('variants') ?? [];
 
 		$menus->created_by = Auth::id();
 		$menus->save();
@@ -144,7 +144,7 @@ class MenusController extends Controller
 		$menus->price = $request->input("price");
 		$menus->stock = $request->input("stock");
 		$menus->is_active = $request->input("is_active");
-		$menus->variants = $request->input('variants', ['Ice', 'Hot']);
+		$menus->variants = $request->input('variants') ?? [];
 
 		$menus->updated_by = Auth::id();
 		$menus->save();

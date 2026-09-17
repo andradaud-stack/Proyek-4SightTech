@@ -54,7 +54,7 @@
                                 <label>Varian</label>
                             </div>
                             <div class="col-md-9 form-group">
-                                @php $currentVariants = $menus->variants ?? ['Ice', 'Hot']; @endphp
+                                @php $currentVariants = $menus->variants ?? []; @endphp
                                 <div class="d-flex gap-4 pt-2">
                                     <label class="form-check">
                                         <input class="form-check-input" type="checkbox" name="variants[]" value="Ice" @checked(in_array('Ice', old('variants', $currentVariants)))>
