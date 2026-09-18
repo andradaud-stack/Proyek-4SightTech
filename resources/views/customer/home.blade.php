@@ -200,77 +200,214 @@
     box-shadow: 0 6px 20px rgba(70, 36, 26, 0.06);
     user-select: none;
     touch-action: pan-y;
+    height: 200px;
+    max-height: 200px;
   }
 
   .ad-track {
     display: flex;
     transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
     width: 100%;
+    height: 100%;
   }
 
   .ad-slide {
     min-width: 100%;
     flex-shrink: 0;
-    padding: 26px 22px 30px;
+    padding: 28px 28px 26px;
     position: relative;
-    min-height: 195px;
+    min-height: 200px;
+    height: 200px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
     overflow: hidden;
+    background: #f3e8dd;
+    border: 1px solid rgba(95, 66, 45, 0.08);
   }
 
   .ad-content {
-    max-width: 62%;
     position: relative;
     z-index: 2;
+    max-width: 58%;
   }
 
   .ad-eyebrow {
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--caramel);
-    margin-bottom: 8px;
+    color: rgba(79, 54, 41, 0.8);
+    margin-bottom: 12px;
     display: inline-block;
   }
 
   .ad-title {
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: 22px;
+    font-size: clamp(42px, 5vw, 110px);
     font-weight: 700;
-    line-height: 1.25;
-    color: var(--dark);
-    margin-bottom: 10px;
-    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: #3b261b;
+    margin-bottom: 12px;
+    letter-spacing: -0.05em;
   }
 
   .ad-title em {
     font-style: italic;
-    color: var(--espresso);
+    color: #3b261b;
+    display: block;
   }
 
   .ad-desc {
-    font-size: 12px;
-    line-height: 1.45;
-    color: #6e5e54;
+    font-size: clamp(18px, 1.7vw, 24px);
+    line-height: 1.2;
+    color: rgba(39, 25, 19, 0.8);
+    font-weight: 500;
+    max-width: 620px;
   }
 
   .ad-art {
     position: absolute;
-    right: -10px;
-    bottom: -15px;
-    width: 160px;
-    height: 160px;
+    right: 18px;
+    bottom: 8px;
+    width: 36%;
+    height: 88%;
     pointer-events: none;
     z-index: 1;
   }
+
+  .promo-badge {
+    position: absolute;
+    right: 20%;
+    bottom: 22px;
+    transform: rotate(7deg);
+    background: #4b2d1f;
+    color: #f7eedd;
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 18px 32px rgba(52, 30, 20, 0.15);
+    border: 7px solid rgba(92, 64, 48, 0.8);
+    z-index: 3;
+  }
+
+  .promo-badge-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-weight: 800;
+    line-height: 0.9;
+  }
+
+  .promo-badge-inner span:first-child {
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .promo-badge-inner strong {
+    font-size: 70px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.08em;
+  }
+
+  .promo-badge-inner .percent {
+    font-size: 58px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.08em;
+  }
+
+  .promo-badge-inner .percent::after {
+    content: '%';
+  }
+
+  .promo-leaf,
+  .promo-leaf::before,
+  .promo-leaf::after,
+  .promo-bean {
+    position: absolute;
+    display: block;
+    pointer-events: none;
+  }
+
+  .promo-leaf {
+    width: 90px;
+    height: 34px;
+    border: 2px solid rgba(95, 66, 45, 0.38);
+    border-color: rgba(95, 66, 45, 0.38) transparent transparent transparent;
+    border-radius: 50% 50% 0 0;
+    transform: rotate(-24deg);
+  }
+
+  .promo-leaf::before,
+  .promo-leaf::after {
+    content: "";
+    width: 62px;
+    height: 22px;
+    border: 2px solid rgba(95, 66, 45, 0.38);
+    border-color: rgba(95, 66, 45, 0.38) transparent transparent transparent;
+    border-radius: 50% 50% 0 0;
+    left: 12px;
+    top: -2px;
+  }
+
+  .promo-leaf::after {
+    transform: rotate(18deg);
+    left: 20px;
+    top: 4px;
+  }
+
+  .promo-bean {
+    width: 22px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(95, 66, 45, 0.4);
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+    transform: rotate(-36deg);
+  }
+
+  .promo-branch-left { left: 14px; bottom: 54px; } .promo-branch-right { right: 12px; top: 26px; }
+  .promo-branch-left .promo-leaf { transform: rotate(-20deg); }
+  .promo-branch-right .promo-leaf { transform: rotate(18deg) scaleX(-1); }
 
   .ad-art svg {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 8px 18px rgba(70, 36, 26, 0.1));
+  }
+
+  .ad-slide.ad-image-slide {
+    padding: 0;
+    display: block;
+    background: #f3e8dd;
+    height: 200px;
+    min-height: 200px;
+  }
+
+  .ad-slide.ad-image-slide .ad-content,
+  .ad-slide.ad-image-slide .ad-art,
+  .ad-slide.ad-image-slide .promo-badge,
+  .ad-slide.ad-image-slide .promo-leaf,
+  .ad-slide.ad-image-slide .promo-bean {
+    display: none !important;
+  }
+
+  .ad-slide.ad-image-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
   }
 
   /* Dots indicator */
@@ -770,6 +907,87 @@
     stroke: var(--espresso);
   }
 
+  .cart-summary-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 92px;
+    transform: translateX(-50%);
+    width: min(92vw, 440px);
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(35, 22, 17, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+    padding: 12px 14px 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    z-index: 60;
+  }
+
+  .cart-summary-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .cart-summary-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #7a6c63;
+  }
+
+  .cart-summary-total {
+    font-size: 18px;
+    font-weight: 800;
+    color: #141414;
+    white-space: nowrap;
+  }
+
+  .cart-summary-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .cart-summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #2e9d62;
+    color: #2e9d62;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(46,157,98,0.18);
+  }
+
+  .cart-summary-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  .cart-summary-checkout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 13px 16px;
+    border-radius: 999px;
+    background: #2e9d62;
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(46,157,98,0.25);
+  }
+
   @media (min-width: 700px) {
     body { background: #16100d; }
     .phone {
@@ -838,84 +1056,16 @@
       <div class="ad-slider" id="adSlider">
         <div class="ad-track" id="adTrack">
 
-          <!-- Slide 1 -->
-          <div class="ad-slide">
-            <div class="ad-content">
-              <span class="ad-eyebrow">GOOD COFFEE • GOOD MOOD</span>
-              <h2 class="ad-title">Kopi yang bikin<br><em>hari lebih baik.</em></h2>
-              <p class="ad-desc">Ruang untuk jeda, rasa untuk cerita.</p>
-            </div>
-            <div class="ad-art">
-              <!-- Stylized Coffee Cup & Heart Latte Art -->
-              <svg viewBox="0 0 160 160" fill="none">
-                <circle cx="85" cy="85" r="55" fill="#edd5be" opacity="0.6"/>
-                <!-- Saucer -->
-                <ellipse cx="80" cy="115" rx="55" ry="18" fill="#d8bda5"/>
-                <ellipse cx="80" cy="112" rx="48" ry="14" fill="#eddcd0"/>
-                <!-- Cup body -->
-                <path d="M42 65 C42 105 118 105 118 65 Z" fill="#ffffff"/>
-                <ellipse cx="80" cy="65" rx="38" ry="14" fill="#ffffff"/>
-                <!-- Coffee liquid -->
-                <ellipse cx="80" cy="65" rx="34" ry="11" fill="#4a251b"/>
-                <!-- Latte art heart -->
-                <path d="M80 67 C78 64 74 63 72 65 C69 67 70 70 80 74 C90 70 91 67 88 65 C86 63 82 64 80 67 Z" fill="#eddcd0" opacity="0.95"/>
-                <!-- Cup handle -->
-                <path d="M115 72 C125 72 128 85 116 88" stroke="#ffffff" stroke-width="6" stroke-linecap="round" fill="none"/>
-                <!-- Gentle steam -->
-                <path d="M72 44 Q70 36 74 30" stroke="#cbb39e" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
-                <path d="M82 42 Q86 34 82 28" stroke="#cbb39e" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
-              </svg>
-            </div>
+          <div class="ad-slide ad-image-slide">
+            <img src="{{ asset('assets/images/iklan/Iklan 1.jpeg') }}" alt="Promo 1" loading="lazy">
           </div>
 
-          <!-- Slide 2 -->
-          <div class="ad-slide">
-            <div class="ad-content">
-              <span class="ad-eyebrow">SPECIAL ARTISAN BREW</span>
-              <h2 class="ad-title">Cita rasa kopi<br><em>khas Nusantara.</em></h2>
-              <p class="ad-desc">Diseduh presisi dari biji pilihan barista kami.</p>
-            </div>
-            <div class="ad-art">
-              <!-- Stylized Iced Coffee Glass -->
-              <svg viewBox="0 0 160 160" fill="none">
-                <circle cx="85" cy="85" r="55" fill="#f0dbcb" opacity="0.6"/>
-                <!-- Tall Glass -->
-                <path d="M60 40 L68 120 C68 125 92 125 92 120 L100 40 Z" fill="#ffffff" opacity="0.85"/>
-                <!-- Drink gradient -->
-                <path d="M62 55 L68 118 C70 122 90 122 92 118 L98 55 Z" fill="#582a1e"/>
-                <!-- Milk blend top -->
-                <ellipse cx="80" cy="55" rx="18" ry="6" fill="#dfc0aa"/>
-                <!-- Ice Cubes -->
-                <rect x="70" y="65" width="12" height="12" rx="3" fill="#ffffff" opacity="0.5" transform="rotate(15 70 65)"/>
-                <rect x="78" y="85" width="14" height="13" rx="3" fill="#ffffff" opacity="0.4" transform="rotate(-10 78 85)"/>
-                <!-- Straw -->
-                <line x1="88" y1="24" x2="74" y2="100" stroke="#d97757" stroke-width="4" stroke-linecap="round"/>
-              </svg>
-            </div>
+          <div class="ad-slide ad-image-slide">
+            <img src="{{ asset('assets/images/iklan/Iklan 2.jpeg') }}" alt="Promo 2" loading="lazy">
           </div>
 
-          <!-- Slide 3 -->
-          <div class="ad-slide">
-            <div class="ad-content">
-              <span class="ad-eyebrow">FRESH FROM THE OVEN</span>
-              <h2 class="ad-title">Pastry renyah &<br><em>hangat hari ini.</em></h2>
-              <p class="ad-desc">Teman ngopi paling pas untuk temani harimu.</p>
-            </div>
-            <div class="ad-art">
-              <!-- Stylized Croissant / Bakery -->
-              <svg viewBox="0 0 160 160" fill="none">
-                <circle cx="85" cy="85" r="55" fill="#fae4d0" opacity="0.6"/>
-                <!-- Croissant curve -->
-                <ellipse cx="80" cy="92" rx="40" ry="18" fill="#d98943"/>
-                <ellipse cx="80" cy="88" rx="34" ry="16" fill="#e89d52"/>
-                <path d="M50 94 C55 80 75 75 80 82 C85 75 105 80 110 94 C100 102 60 102 50 94 Z" fill="#f5af64"/>
-                <path d="M68 84 Q80 76 92 84" stroke="#c4742a" stroke-width="3" fill="none"/>
-                <path d="M72 90 Q80 84 88 90" stroke="#c4742a" stroke-width="2.5" fill="none"/>
-                <!-- Sparkles -->
-                <circle cx="50" cy="55" r="3" fill="#d98943"/>
-                <circle cx="108" cy="58" r="2.5" fill="#d98943"/>
-              </svg>
-            </div>
+          <div class="ad-slide ad-image-slide">
+            <img src="{{ asset('assets/images/iklan/Iklan 3.jpeg') }}" alt="Promo 3" loading="lazy">
           </div>
 
         </div>
@@ -1052,6 +1202,35 @@
     </div>
 
   </div>
+
+  @php
+    $cartItems = session('cart', []);
+    $cartItemCount = 0;
+    $cartTotal = 0;
+    foreach ($cartItems as $item) {
+        $cartItemCount += (int) ($item['qty'] ?? 0);
+        $cartTotal += (int) ($item['price'] ?? 0) * (int) ($item['qty'] ?? 0);
+    }
+  @endphp
+
+  @if($cartItemCount > 0)
+    <div class="cart-summary-bar">
+      <div class="cart-summary-meta">
+        <span class="cart-summary-count">{{ $cartItemCount }} item</span>
+        <span class="cart-summary-total">Rp {{ number_format($cartTotal, 0, ',', '.') }}</span>
+      </div>
+      <div class="cart-summary-actions">
+        <a href="{{ route('customer.cart.index') }}" class="cart-summary-icon" aria-label="Lihat keranjang">
+          <svg viewBox="0 0 24 24">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+        </a>
+        <a href="{{ route('customer.checkout') }}" class="cart-summary-checkout">Checkout</a>
+      </div>
+    </div>
+  @endif
 
   <!-- Bottom Navbar: Beranda, Riwayat, Keranjang, Profil -->
   <div class="navbar-wrap">

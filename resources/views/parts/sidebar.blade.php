@@ -23,7 +23,7 @@
 							@endforeach
 						</ul>
 					</li>
-				@else
+				@elseif (Route::has($menu->routing))
 					<li class="sidebar-item {{ $menu->routing == $route ? 'active' : '' }}">
 						<a href="{{ route($menu->routing) }}" class='sidebar-link'>
 							<i class="fa {{ $menu->icon }}"></i> <span>{{ $menu->menu }}</span>

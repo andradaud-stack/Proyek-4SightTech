@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Controller;
 use App\Modules\Categories\Models\Categories;
@@ -232,7 +231,7 @@ public function showRegister()
 
         session(['cart' => $cart]);
 
-        return redirect()->route('customer.cart.index');
+        return redirect()->route('customer.home')->with('message_success', $menu->name . ' ditambahkan ke keranjang.');
     }
 
     public function cartUpdate(Request $request)
@@ -317,10 +316,6 @@ public function showRegister()
                 'status_pembayaran' => 'belum_bayar',
                 'total' => $total,
             ];
-
-            if (Schema::hasColumn('orders', 'user_id')) {
-                $orderData['user_id'] = $customerId ? (string) $customerId : null;
-            }
 
             $order = Orders::create($orderData);
 

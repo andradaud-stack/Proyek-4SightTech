@@ -159,66 +159,85 @@
     box-shadow:none;
   }
 
-  /* Bottom navbar shared with the home page */
-  .navbar-wrap {
+  .cart-summary-bar {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    padding: 0 16px 16px;
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  .navbar {
-    width: 100%;
-    max-width: 440px;
-    pointer-events: auto;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    width: min(92vw, 440px);
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(35, 22, 17, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+    padding: 12px 14px 12px 18px;
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    background: #ffffff;
-    border-radius: 28px;
-    padding: 8px 12px;
-    box-shadow: 0 12px 35px rgba(35, 22, 17, 0.18);
-    border: 1px solid #ebdcd1;
+    justify-content: space-between;
+    gap: 14px;
+    z-index: 60;
   }
 
-  .nav-link {
+  .cart-summary-meta {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    padding: 8px 16px;
-    border-radius: 18px;
-    text-decoration: none;
-    color: #8c7f76;
-    font-size: 11px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    min-width: 68px;
+    gap: 2px;
+    min-width: 0;
   }
 
-  .nav-link svg {
+  .cart-summary-count {
+    font-size: 12px;
+    font-weight: 700;
+    color: #7a6c63;
+  }
+
+  .cart-summary-total {
+    font-size: 19px;
+    font-weight: 800;
+    color: #141414;
+    white-space: nowrap;
+  }
+
+  .cart-summary-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .cart-summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #2e9d62;
+    color: #2e9d62;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(46,157,98,0.18);
+  }
+
+  .cart-summary-icon svg {
     width: 22px;
     height: 22px;
     stroke: currentColor;
     fill: none;
     stroke-width: 2;
-    transition: stroke 0.2s ease;
   }
 
-  .nav-link.active {
-    background: #f4ede6;
-    color: #4a2c20;
+  .cart-summary-checkout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 13px 16px;
+    border-radius: 999px;
+    background: #2e9d62;
+    color: #fff;
     font-weight: 800;
-  }
-
-  .nav-link.active svg {
-    stroke: #4a2c20;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(46,157,98,0.25);
   }
 
   @media (min-width:700px){
@@ -304,40 +323,36 @@
 
   </div>
 
-  <div class="navbar-wrap">
-    <nav class="navbar" id="navbar">
-      <a href="{{ route('customer.home') }}" class="nav-link active" aria-label="Beranda">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-        <span>Beranda</span>
-      </a>
-      <a href="{{ route('customer.order.history') }}" class="nav-link" aria-label="Riwayat">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        <span>Riwayat</span>
-      </a>
-      <a href="{{ route('customer.cart.index') }}" class="nav-link" aria-label="Keranjang">
+</div>
+
+@php
+  $cartItems = session('cart', []);
+  $cartItemCount = 0;
+  $cartTotal = 0;
+  foreach ($cartItems as $item) {
+      $cartItemCount += (int) ($item['qty'] ?? 0);
+      $cartTotal += (int) ($item['price'] ?? 0) * (int) ($item['qty'] ?? 0);
+  }
+@endphp
+
+@if($cartItemCount > 0)
+  <div class="cart-summary-bar">
+    <div class="cart-summary-meta">
+      <span class="cart-summary-count">{{ $cartItemCount }} item</span>
+      <span class="cart-summary-total">Rp {{ number_format($cartTotal, 0, ',', '.') }}</span>
+    </div>
+    <div class="cart-summary-actions">
+      <a href="{{ route('customer.cart.index') }}" class="cart-summary-icon" aria-label="Lihat keranjang">
         <svg viewBox="0 0 24 24">
           <circle cx="9" cy="21" r="1"/>
           <circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
-        <span>Keranjang</span>
       </a>
-      <a href="{{ route('customer.profile.index') }}" class="nav-link" aria-label="Profil">
-        <svg viewBox="0 0 24 24">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-        <span>Profil</span>
-      </a>
-    </nav>
+      <a href="{{ route('customer.checkout') }}" class="cart-summary-checkout">Checkout</a>
+    </div>
   </div>
-</div>
+@endif
 
 <script>
   const variantEls = document.querySelectorAll('.pd-variant');
