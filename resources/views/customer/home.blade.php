@@ -195,13 +195,13 @@
     position: relative;
     border-radius: 22px;
     overflow: hidden;
-    background: linear-gradient(135deg, #fdf7f0 0%, #faede1 100%);
+    background: #fdf7f0;
     border: 1px solid #eee1d3;
     box-shadow: 0 6px 20px rgba(70, 36, 26, 0.06);
     user-select: none;
     touch-action: pan-y;
-    height: 200px;
-    max-height: 200px;
+    width: 100%;
+    aspect-ratio: 880 / 400;
   }
 
   .ad-track {
@@ -209,21 +209,18 @@
     transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
     width: 100%;
     height: 100%;
+    will-change: transform;
   }
 
   .ad-slide {
+    flex: 0 0 100%;
     min-width: 100%;
-    flex-shrink: 0;
-    padding: 28px 28px 26px;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
     position: relative;
-    min-height: 200px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     overflow: hidden;
-    background: #f3e8dd;
-    border: 1px solid rgba(95, 66, 45, 0.08);
+    box-sizing: border-box;
   }
 
   .ad-content {
@@ -388,10 +385,12 @@
 
   .ad-slide.ad-image-slide {
     padding: 0;
+    margin: 0;
+    border: none;
     display: block;
-    background: #f3e8dd;
-    height: 200px;
-    min-height: 200px;
+    background: transparent;
+    width: 100%;
+    height: 100%;
   }
 
   .ad-slide.ad-image-slide .ad-content,
@@ -408,6 +407,7 @@
     object-fit: cover;
     object-position: center;
     display: block;
+    border: none;
   }
 
   /* Dots indicator */
@@ -1317,6 +1317,7 @@
 
     slider.addEventListener('touchstart', (e) => {
       startX = e.touches[0].clientX;
+      currentX = startX;
       isSwiping = true;
       stopAutoSlide();
     }, { passive: true });
